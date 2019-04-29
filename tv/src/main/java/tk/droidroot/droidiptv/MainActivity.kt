@@ -52,6 +52,8 @@ class MainActivity : AppCompatActivity() {
 
         //actionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE, ActionBar.DISPLAY_SHOW_CUSTOM)
 
+        //kotlin
+
         app_drawer.setScrimColor(Color.TRANSPARENT)
 
         val mDrawerToggle: ActionBarDrawerToggle = object:ActionBarDrawerToggle(this, app_drawer, toolbar, R.string.drawer_open, R.string.drawer_close){
