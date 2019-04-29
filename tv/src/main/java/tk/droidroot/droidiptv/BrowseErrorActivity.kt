@@ -40,7 +40,7 @@ class BrowseErrorActivity : Activity() {
     }
 
     private fun testError() {
-        mErrorFragment = ErrorFragment()
+        /*mErrorFragment = ErrorFragment()
         fragmentManager
                 .beginTransaction()
                 .add(R.id.main_browse_fragment, mErrorFragment)
@@ -59,7 +59,7 @@ class BrowseErrorActivity : Activity() {
                     .remove(mSpinnerFragment)
                     .commit()
             mErrorFragment.setErrorContent()
-        }, TIMER_DELAY)
+        }, TIMER_DELAY)*/
     }
 
     class SpinnerFragment : Fragment() {
