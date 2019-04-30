@@ -24,10 +24,18 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:minHeight="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="#708090"
             android:elevation="4dp"
-            android:fitsSystemWindows="true"
-    />
+            android:fitsSystemWindows="true">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DroidIPTV"
+                android:textColor="#008080"
+                android:textStyle="bold|italic"/>
+
+    </android.support.v7.widget.Toolbar>
 
 <!--    <include
             layout="@layout/toolbar">
@@ -42,17 +50,18 @@
     <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FFFFFF">
+            android:background="#778899">
     </FrameLayout>
     
     <ListView
+            android:id="@+id/channelList"
             android:layout_width="240dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:choiceMode="singleChoice"
-            android:divider="@android:color/transparent"
+            android:divider="#111"
             android:dividerHeight="1dp"
-            android:background="@color/lb_grey"/>
+            android:background="#708090"/>
     
 </android.support.v4.widget.DrawerLayout>
 </LinearLayout>

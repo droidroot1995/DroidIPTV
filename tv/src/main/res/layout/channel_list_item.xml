@@ -21,13 +21,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/channelNumber"/>
+                android:layout_toLeftOf="@+id/channelNumber"
+                android:textColor="#FFFFFF"/>
 
         <TextView
                 android:id="@+id/channelNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"/>
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"
+                android:textColor="#FFFFFF"/>
+
+        <TextView
+                android:id="@+id/channelURL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"/>
 
     </RelativeLayout>
 
