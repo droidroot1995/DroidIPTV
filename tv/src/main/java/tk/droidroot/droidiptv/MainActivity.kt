@@ -18,6 +18,8 @@ import android.app.ActionBar
 import android.app.Activity
 import android.app.UiModeManager
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
@@ -29,9 +31,12 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.SimpleAdapter
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.channel_list_item.view.*
+import tk.droidroot.droidiptv.player.VLCPlayerActivity
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -171,6 +176,14 @@ class MainActivity : AppCompatActivity() {
 
                 val adapter = SimpleAdapter(context, result, R.layout.channel_list_item, from, to)
                 lw.setAdapter(adapter)
+
+                lw.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+                    val intent = Intent(context, VLCPlayerActivity::class.java);
+                    intent.putExtra(VLCPlayerActivity.LOCATION, view.channelURL.text.toString() )
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+                    Log.d("Channel URL", view.channelURL.text.toString())
+                    context.startActivity(intent)
+                }
             }
         }
     }
