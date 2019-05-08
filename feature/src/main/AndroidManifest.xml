@@ -3,7 +3,7 @@
     package="tk.droidroot.droidiptv.feature">
 
     <application>
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

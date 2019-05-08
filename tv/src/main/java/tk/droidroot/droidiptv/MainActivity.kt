@@ -14,21 +14,13 @@
 
 package tk.droidroot.droidiptv
 
-import android.app.ActionBar
-import android.app.Activity
 import android.app.UiModeManager
 import android.content.Context
-import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.content.res.Configuration
 import android.graphics.Color
-import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -38,9 +30,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.channel_list_item.view.*
 import tk.droidroot.droidiptv.player.VLCPlayerActivity
-import java.io.BufferedReader
 import java.io.File
-import java.io.InputStreamReader
 import java.net.URL
 
 /**
