@@ -48,6 +48,7 @@
         android:id="@+id/app_drawer">
 
     <FrameLayout
+            android:id="@+id/player_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#778899">

@@ -34,6 +34,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.SimpleAdapter
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.channel_list_item.view.*
 import tk.droidroot.droidiptv.player.VLCPlayerActivity
@@ -86,7 +87,7 @@ class MainActivity : AppCompatActivity() {
 
         val mListView = channelList
 
-        val pd = PlaylistDownloader(applicationContext, mListView)
+        val pd = PlaylistDownloader(applicationContext, mListView, this)
         pd.execute("link")
     }
 
@@ -94,14 +95,16 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
     }
 
-    class PlaylistDownloader(context: Context, lw: ListView) : AsyncTask<String, Void, List<Map<String, String>>?>(){
+    class PlaylistDownloader(context: Context, lw: ListView, mainActivity: AppCompatActivity) : AsyncTask<String, Void, List<Map<String, String>>?>(){
 
         private val context: Context
         private val lw: ListView
+        private val mainActivity: AppCompatActivity
 
         init {
             this.context = context.applicationContext
             this.lw = lw
+            this.mainActivity = mainActivity
         }
 
         override fun onPreExecute() {
@@ -115,36 +118,44 @@ class MainActivity : AppCompatActivity() {
             try {
 
                 if(params[0].equals("link")) {
-                    val address: String = "http://help.avk-wellcom.info/avk.m3u"
 
-                    val url: URL = URL(address)
+                    try {
+                        val address: String = "http://help.avk-wellcom.info/avk.m3u"
 
-                    val inputStream = url.openStream()
-                    val lineList = mutableListOf<String>()
-                    inputStream.bufferedReader().useLines { lines -> lines.forEach { lineList.add(it) } }
+                        val url: URL = URL(address)
 
-                    for (l in lineList) {
-                        Log.d("Playlist", l)
+                        val inputStream = url.openStream()
+                        val lineList = mutableListOf<String>()
+                        inputStream.bufferedReader().useLines { lines -> lines.forEach { lineList.add(it) } }
+
+                        for (l in lineList) {
+                            Log.d("Playlist", l)
+                        }
+
+                        inputStream.close()
+
+
+                        var j = 1
+                        for (i in 1 until lineList.size step 2) {
+
+                            val chMap = mutableMapOf<String, String>()
+
+                            val name = lineList[i].split(',')[1]
+                            chMap.put("name", name)
+
+                            val number = lineList[i].split(',')[0].split(':')[1]
+                            chMap.put("number", j.toString())
+
+                            val chUrl = lineList[i + 1]
+                            chMap.put("url", chUrl)
+
+                            channelList.add(chMap)
+                            j++
+                        }
                     }
-
-                    inputStream.close()
-
-
-
-                    for(i in 1 until lineList.size step 2){
-
-                        val chMap = mutableMapOf<String, String>()
-
-                        val name = lineList[i].split(',')[1]
-                        chMap.put("name", name)
-
-                        val number = lineList[i].split(',')[0].split(':')[1]
-                        chMap.put("number", number)
-
-                        val chUrl = lineList[i+1]
-                        chMap.put("url", chUrl)
-
-                        channelList.add(chMap)
+                    catch (e:Exception){
+                        val toast = Toast.makeText(context, "Network is not available", Toast.LENGTH_LONG)
+                        toast.show()
                     }
                 }
                 else if (params[0].equals("file"))
@@ -178,11 +189,20 @@ class MainActivity : AppCompatActivity() {
                 lw.setAdapter(adapter)
 
                 lw.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-                    val intent = Intent(context, VLCPlayerActivity::class.java);
-                    intent.putExtra(VLCPlayerActivity.LOCATION, view.channelURL.text.toString() )
+                    /*val intent = VLCPlayerActivity.newIntent(context, view.channelURL.text.toString() )
                     intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
                     Log.d("Channel URL", view.channelURL.text.toString())
-                    context.startActivity(intent)
+                    context.startActivity(intent)*/
+
+                    for(fragment in mainActivity.supportFragmentManager.fragments){
+                        mainActivity.supportFragmentManager.beginTransaction().remove(fragment).commit()
+                    }
+
+                    val fragment = VLCPlayerActivity()
+                    val bundle = Bundle()
+                    bundle.putString(VLCPlayerActivity.LOCATION, view.channelURL.text.toString())
+                    fragment.arguments = bundle
+                    mainActivity.supportFragmentManager.beginTransaction().add(R.id.player_fragment, fragment).commit()
                 }
             }
         }
