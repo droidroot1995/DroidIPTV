@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.CheckedTextView;
 import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
@@ -18,10 +20,13 @@ import tk.droidroot.droidiptv.feature.R;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLayoutListener {
+public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLayoutListener, View.OnClickListener {
 
     private SurfaceView mSurface;
     private SurfaceHolder mHolder;
+    private CheckedTextView mPlayPauseButton;
+    private CheckedTextView mFavoritesButton;
+    private CheckedTextView mFullscreenButton;
 
     private static final String TAG = "VLCPlayerActivity";
     public static final String LOCATION = "tk.droidroot.droidiptv.player.VLCPlayerActivity.location";
@@ -102,6 +107,15 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
        mSurface.setVisibility(View.VISIBLE);
        mHolder = mSurface.getHolder();
 
+       mPlayPauseButton = (CheckedTextView) view.findViewById(R.id.play_pause);
+       mPlayPauseButton.setOnClickListener(this);
+
+       mFullscreenButton = (CheckedTextView) view.findViewById(R.id.fullscreenMode);
+       mFullscreenButton.setOnClickListener(this);
+
+       mFavoritesButton = (CheckedTextView) view.findViewById(R.id.addToFavorites);
+       mFavoritesButton.setOnClickListener(this);
+
        createPlayer(mChannelAddress);
 
    }
@@ -109,6 +123,7 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        Log.d(TAG, "mVideoWidth: " + mVideoWidth + ", mVideoHeight: " + mVideoHeight);
         setSize(mVideoWidth, mVideoHeight);
     }
 
@@ -131,6 +146,46 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
         releasePlayer();
         super.onDestroy();
         //releasePlayer();
+    }
+
+    @Override
+    public void onClick(View v){
+       int v_id = v.getId();
+
+       if(v_id == R.id.play_pause){
+           if (v.getBackground() == v.getResources().getDrawable(R.drawable.play)) {
+               if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                   v.setBackgroundDrawable(v.getResources().getDrawable(R.drawable.pause));
+               } else {
+                   v.setBackground(v.getResources().getDrawable(R.drawable.pause));
+               }
+               play();
+           } else if (v.getBackground() == v.getResources().getDrawable(R.drawable.pause)) {
+               if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                   v.setBackgroundDrawable(v.getResources().getDrawable(R.drawable.play));
+               } else {
+                   v.setBackground(v.getResources().getDrawable(R.drawable.play));
+               }
+               pause();
+           }
+       }
+       else if(v_id == R.id.addToFavorites){
+
+       }
+       else if(v_id == R.id.fullscreenMode){
+
+       }
+       else {
+
+       }
+    }
+
+    private void pause(){
+       mMediaPlayer.pause();
+    }
+
+    private void play(){
+       mMediaPlayer.play();
     }
 
     private void setSize(int width, int height){
@@ -273,7 +328,8 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
             options.add("-vvv");
 
             mLibVLC = new LibVLC(context, options); //this, options);
-            mHolder.setKeepScreenOn(true);
+            //mHolder.setKeepScreenOn(true);
+            mSurface.getHolder().setKeepScreenOn(true);
 
             mMediaPlayer = new MediaPlayer(mLibVLC);
             mMediaPlayer.setEventListener(mPlayerListener);
@@ -281,7 +337,6 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
             final IVLCVout vout = mMediaPlayer.getVLCVout();
             vout.setVideoView(mSurface);
 
-            //vout.addCallback(this);
             vout.attachViews();
 
             Media channel = new Media(mLibVLC, Uri.parse(channelAddress));

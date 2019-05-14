@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <!--<FrameLayout
+    <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">-->
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true">
 
         <FrameLayout
                 android:id="@+id/PlayerFrame"
@@ -26,6 +26,76 @@
 
         </FrameLayout>
 
-    <!--</FrameLayout>-->
+    </FrameLayout>
+
+    <LinearLayout
+            android:id="@+id/player_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:background="#000000">
+
+        <CheckedTextView
+                android:id="@+id/addToFavorites"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:focusable="true"
+                android:nextFocusUp="@id/addToFavorites"
+                android:nextFocusDown="@id/play_pause"
+                android:padding="15dp"
+                android:background="@drawable/not_in_favorites"
+        />
+
+        <CheckedTextView
+                android:id="@+id/play_pause"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:focusable="true"
+                android:nextFocusUp="@id/addToFavorites"
+                android:nextFocusDown="@id/fullscreenMode"
+                android:padding="15dp"
+                android:background="@drawable/pause"
+        />
+
+        <CheckedTextView
+                android:id="@+id/fullscreenMode"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:focusable="true"
+                android:nextFocusUp="@id/play_pause"
+                android:nextFocusDown="@id/videoMode"
+                android:padding="15dp"
+                android:background="@drawable/fullscreen"
+        />
+
+        <Button
+                android:id="@+id/videoMode"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:focusable="true"
+                android:nextFocusUp="@id/fullscreenMode"
+                android:nextFocusDown="@id/zoom"
+                android:text="auto"
+                android:gravity="center"
+                android:background="#000000"
+                android:textColor="#FFFFFF"
+        />
+
+        <Button
+                android:id="@+id/zoom"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:focusable="true"
+                android:text="zoom"
+                android:nextFocusUp="@id/videoMode"
+                android:nextFocusDown="@id/zoom"
+                android:gravity="center"
+                android:background="#000000"
+                android:textColor="#FFFFFF"
+        />
+
+    </LinearLayout>
 
 </RelativeLayout>
