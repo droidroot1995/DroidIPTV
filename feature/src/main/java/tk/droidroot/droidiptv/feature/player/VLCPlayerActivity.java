@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CheckedTextView;
+import android.widget.Toast;
 import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
@@ -33,6 +34,8 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
 
     private LibVLC mLibVLC;
     private MediaPlayer mMediaPlayer = null;
+
+    private boolean isPaused = false;
 
     private String mChannelAddress;
     private int mVideoWidth;
@@ -85,8 +88,24 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
    @Override
    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
        context = container.getContext();
+
+       View view = inflater.inflate(R.layout.player_actvity, container, false);
+
+       mSurface = (SurfaceView) view.findViewById(R.id.VLCView);
+       mSurface.setVisibility(View.VISIBLE);
+       mHolder = mSurface.getHolder();
+
+       mPlayPauseButton = (CheckedTextView) view.findViewById(R.id.play_pause);
+       mPlayPauseButton.setOnClickListener(this);
+
+       mFullscreenButton = (CheckedTextView) view.findViewById(R.id.fullscreenMode);
+       mFullscreenButton.setOnClickListener(this);
+
+       mFavoritesButton = (CheckedTextView) view.findViewById(R.id.addToFavorites);
+       mFavoritesButton.setOnClickListener(this);
+
        //mChannelAddress = savedInstanceState.getString(LOCATION);
-       return inflater.inflate(R.layout.player_actvity, container, false);
+       return view;
    }
 
    @Override
@@ -103,7 +122,7 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
 
        //mChannelAddress = savedInstanceState.getString(LOCATION);
 
-       mSurface = (SurfaceView) view.findViewById(R.id.VLCView);
+       /*mSurface = (SurfaceView) view.findViewById(R.id.VLCView);
        mSurface.setVisibility(View.VISIBLE);
        mHolder = mSurface.getHolder();
 
@@ -114,7 +133,7 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
        mFullscreenButton.setOnClickListener(this);
 
        mFavoritesButton = (CheckedTextView) view.findViewById(R.id.addToFavorites);
-       mFavoritesButton.setOnClickListener(this);
+       mFavoritesButton.setOnClickListener(this);*/
 
        createPlayer(mChannelAddress);
 
@@ -153,14 +172,31 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
        int v_id = v.getId();
 
        if(v_id == R.id.play_pause){
-           if (v.getBackground() == v.getResources().getDrawable(R.drawable.play)) {
+           /*if (v.getBackground().getConstantState().equals(v.getResources().getDrawable(R.drawable.play))) {
                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                    v.setBackgroundDrawable(v.getResources().getDrawable(R.drawable.pause));
                } else {
                    v.setBackground(v.getResources().getDrawable(R.drawable.pause));
                }
                play();
-           } else if (v.getBackground() == v.getResources().getDrawable(R.drawable.pause)) {
+           } else if (v.getBackground().getConstantState().equals(v.getResources().getDrawable(R.drawable.pause))) {
+               if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                   v.setBackgroundDrawable(v.getResources().getDrawable(R.drawable.play));
+               } else {
+                   v.setBackground(v.getResources().getDrawable(R.drawable.play));
+               }
+               pause();
+           }*/
+
+           if(isPaused){
+               play();
+               if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                   v.setBackgroundDrawable(v.getResources().getDrawable(R.drawable.pause));
+               } else {
+                   v.setBackground(v.getResources().getDrawable(R.drawable.pause));
+               }
+           }
+           else {
                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                    v.setBackgroundDrawable(v.getResources().getDrawable(R.drawable.play));
                } else {
@@ -168,12 +204,15 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
                }
                pause();
            }
+
+           Toast.makeText(this.getContext(), "PlayPause clicked", Toast.LENGTH_SHORT).show();
+
        }
        else if(v_id == R.id.addToFavorites){
-
+           Toast.makeText(this.getContext(), "AddToFavorites clicked", Toast.LENGTH_SHORT).show();
        }
        else if(v_id == R.id.fullscreenMode){
-
+           Toast.makeText(this.getContext(), "FullscreenMode clicked", Toast.LENGTH_SHORT).show();
        }
        else {
 
@@ -181,11 +220,27 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
     }
 
     private void pause(){
-       mMediaPlayer.pause();
+       if(mMediaPlayer != null) {
+           mMediaPlayer.pause();
+           isPaused = true;
+       }
     }
 
     private void play(){
-       mMediaPlayer.play();
+       if(mMediaPlayer != null) {
+
+           Media channel = new Media(mLibVLC, Uri.parse(mChannelAddress));
+           channel.setHWDecoderEnabled(true, true);
+           mMediaPlayer.setMedia(channel);
+
+           mMediaPlayer.play();
+           mMediaPlayer.setVideoTrackEnabled((true));
+
+           isPaused = false;
+
+           /*mMediaPlayer.play();
+           isPaused = false;*/
+       }
     }
 
     private void setSize(int width, int height){
@@ -349,6 +404,8 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
 
             mMediaPlayer.play();
             mMediaPlayer.setVideoTrackEnabled((true));
+
+            isPaused = false;
         }
         catch(Exception e){
             e.printStackTrace();
@@ -384,6 +441,8 @@ public class VLCPlayerActivity extends Fragment implements IVLCVout.OnNewVideoLa
 
     @Override
     public void onNewVideoLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
+
+        Toast.makeText(this.getContext(), "OnNewVideoLayout", Toast.LENGTH_SHORT).show();
 
         Log.d("VLCPlayerActivity", "onNewVideoLayout");
 
